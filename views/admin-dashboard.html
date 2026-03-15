@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Watchly</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="min-h-screen bg-background">
+        <nav class="navbar">
+            <div class="navbar-content">
+                <a href="admin-dashboard.html" class="navbar-brand">
+                    <img src="Watchly logo.png" alt="Watchly logo" class="navbar-logo" style="width: 24px; height: 24px; object-fit: contain;">
+                    <span class="gradient-text">Watchly Admin</span>
+                </a>
+                <div class="navbar-nav">
+                    <a href="admin-dashboard.html" class="nav-link active">
+                        <span class="hidden lg:inline">Dashboard</span>
+                    </a>
+                    <a href="admin-manage-movies.html" class="nav-link">
+                        <span class="hidden lg:inline">Manage Movies</span>
+                    </a>
+                    <a href="admin-manage-genres.html" class="nav-link">
+                        <span class="hidden lg:inline">Manage Genres</span>
+                    </a>
+                    <a href="admin-manage-users.html" class="nav-link">
+                        <span class="hidden lg:inline">Manage Users</span>
+                    </a>
+                    <a href="admin-manage-posts.html" class="nav-link">
+                        <span class="hidden lg:inline">Moderate Posts</span>
+                    </a>
+                    <a href="admin-audit-log.html" class="nav-link">
+                        <span class="hidden lg:inline">Audit Trail</span>
+                    </a>
+                </div>
+                <div class="navbar-actions">
+                    <a href="admin-dashboard.html" class="nav-link nav-link-compact">Admin Home</a>
+                    <a href="#" class="btn btn-primary btn-sm" id="logout-btn">Logout</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container mx-auto px-4 py-8 space-y-8">
+            <header class="space-y-2">
+                <p class="text-sm text-muted-foreground">Administrative Control Center</p>
+                <h1 class="text-3xl font-bold">Welcome back, Admin</h1>
+                <p class="text-muted-foreground max-w-3xl">Monitor community health, oversee catalog quality, and manage platform operations.</p>
+            </header>
+
+            <section class="space-y-4">
+                <div class="flex items-center justify-between gap-3 flex-wrap">
+                    <h2 class="text-2xl font-semibold">Management Console</h2>
+                    <div class="flex gap-2 flex-wrap">
+                        <a href="admin-audit-log.html" class="btn btn-outline-primary btn-sm">View Audit Log</a>
+                        <a href="admin-restricted-terms.html" class="btn btn-outline btn-sm">Restricted Terms</a>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                    <a href="admin-manage-movies.html" class="card hover:shadow-glow transition-transform" style="text-decoration: none; color: inherit;">
+                        <div class="card-content space-y-3">
+                            <div class="flex items-center justify-between">
+                                <h3 class="card-title">Movies</h3>
+                                <span class="badge">Catalog</span>
+                            </div>
+                            <p class="text-muted-foreground">Add, update, and manage movie catalog.</p>
+                            <div class="flex items-center gap-2 text-sm text-primary"><span>Open Console</span></div>
+                        </div>
+                    </a>
+                    <a href="admin-manage-genres.html" class="card hover:shadow-glow transition-transform" style="text-decoration: none; color: inherit;">
+                        <div class="card-content space-y-3">
+                            <div class="flex items-center justify-between">
+                                <h3 class="card-title">Genres</h3>
+                                <span class="badge badge-secondary">Taxonomy</span>
+                            </div>
+                            <p class="text-muted-foreground">Maintain genre definitions and tags.</p>
+                            <div class="flex items-center gap-2 text-sm text-primary"><span>Manage Genres</span></div>
+                        </div>
+                    </a>
+                    <a href="admin-manage-users.html" class="card hover:shadow-glow transition-transform" style="text-decoration: none; color: inherit;">
+                        <div class="card-content space-y-3">
+                            <div class="flex items-center justify-between">
+                                <h3 class="card-title">Users</h3>
+                                <span class="badge badge-success">Community</span>
+                            </div>
+                            <p class="text-muted-foreground">Review and manage user accounts.</p>
+                            <div class="flex items-center gap-2 text-sm text-primary"><span>Review Accounts</span></div>
+                        </div>
+                    </a>
+                    <a href="admin-manage-posts.html" class="card hover:shadow-glow transition-transform" style="text-decoration: none; color: inherit;">
+                        <div class="card-content space-y-3">
+                            <div class="flex items-center justify-between">
+                                <h3 class="card-title">Posts</h3>
+                                <span class="badge badge-warning">Moderation</span>
+                            </div>
+                            <p class="text-muted-foreground">Review and moderate user posts.</p>
+                            <div class="flex items-center gap-2 text-sm text-primary"><span>Open Queue</span></div>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <section class="space-y-6">
+                <h2 class="text-2xl font-semibold">Platform Statistics</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div class="card">
+                        <div class="card-content text-center">
+                            <div class="text-3xl font-bold text-primary" id="stat-users">0</div>
+                            <div class="text-sm text-muted-foreground">Total Users</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content text-center">
+                            <div class="text-3xl font-bold text-accent" id="stat-movies">0</div>
+                            <div class="text-sm text-muted-foreground">Total Movies</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content text-center">
+                            <div class="text-3xl font-bold text-success" id="stat-posts">0</div>
+                            <div class="text-sm text-muted-foreground">Total Posts</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content text-center">
+                            <div class="text-3xl font-bold text-primary" id="stat-events">0</div>
+                            <div class="text-sm text-muted-foreground">Total Events</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content text-center">
+                            <div class="text-3xl font-bold text-accent" id="stat-reviews">0</div>
+                            <div class="text-sm text-muted-foreground">Total Reviews</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-brand-row"><img src="Watchly logo.png" alt="Watchly logo" class="footer-logo"><span class="footer-brand-name">Watchly</span></div>
+                    <p class="footer-description">Administrative dashboard for managing the Watchly platform.</p>
+                </div>
+            </div>
+            <div class="footer-bottom"><p class="footer-bottom-text">&copy; 2025 Watchly. All rights reserved.</p></div>
+        </footer>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        async function loadDashboardStats() {
+            try {
+                const stats = await Admin.getDashboard();
+                document.getElementById('stat-users').textContent = stats.total_users || 0;
+                document.getElementById('stat-movies').textContent = stats.total_movies || 0;
+                document.getElementById('stat-posts').textContent = stats.total_posts || 0;
+                document.getElementById('stat-events').textContent = stats.total_events || 0;
+                document.getElementById('stat-reviews').textContent = stats.total_reviews || 0;
+            } catch (error) {
+                console.error('Error loading dashboard stats:', error);
+            }
+        }
+
+        async function handleLogout() {
+            try { await Auth.logout(); } catch (e) {}
+            window.location.href = 'admin-login.html';
+        }
+
+        async function init() {
+            try {
+                const session = await Auth.checkSession();
+                if (!session.authenticated || session.user.type !== 'admin') {
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
+                await loadDashboardStats();
+            } catch (error) {
+                window.location.href = 'admin-login.html';
+            }
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', (e) => { e.preventDefault(); handleLogout(); });
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

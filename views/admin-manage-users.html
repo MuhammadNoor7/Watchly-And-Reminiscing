@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users - Watchly Admin</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="min-h-screen bg-background">
+        <nav class="navbar">
+            <div class="navbar-content">
+                <a href="admin-dashboard.html" class="navbar-brand">
+                    <img src="Watchly logo.png" alt="Watchly logo" class="navbar-logo" style="width: 24px; height: 24px; object-fit: contain;">
+                    <span class="gradient-text">Watchly Admin</span>
+                </a>
+                <div class="navbar-nav">
+                    <a href="admin-dashboard.html" class="nav-link">
+                        <span class="hidden lg:inline">Dashboard</span>
+                    </a>
+                    <a href="admin-manage-movies.html" class="nav-link">
+                        <span class="hidden lg:inline">Manage Movies</span>
+                    </a>
+                    <a href="admin-manage-genres.html" class="nav-link">
+                        <span class="hidden lg:inline">Manage Genres</span>
+                    </a>
+                    <a href="admin-manage-users.html" class="nav-link active">
+                        <span class="hidden lg:inline">Manage Users</span>
+                    </a>
+                    <a href="admin-manage-posts.html" class="nav-link">
+                        <span class="hidden lg:inline">Moderate Posts</span>
+                    </a>
+                    <a href="admin-audit-log.html" class="nav-link">
+                        <span class="hidden lg:inline">Audit Trail</span>
+                    </a>
+                </div>
+                <div class="navbar-actions">
+                    <a href="admin-dashboard.html" class="nav-link nav-link-compact">Admin Home</a>
+                    <a href="#" id="logout-btn" class="btn btn-primary btn-sm">Logout</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container mx-auto px-4 py-8 space-y-8">
+            <header class="space-y-2">
+                <p class="text-sm text-muted-foreground">Community Oversight</p>
+                <h1 class="text-3xl font-bold">Manage Users</h1>
+                <p class="text-muted-foreground max-w-3xl">Promote trusted members, issue strikes, and coordinate escalation workflows to keep the Watchly community healthy.</p>
+            </header>
+
+            <section id="section-registered-users" class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Adjust User Role</h2>
+                    <p class="card-description">Find a user, update their role, and optionally add a note for the audit log.</p>
+                </div>
+                <div class="card-content">
+                    <form class="grid grid-cols-1 md:grid-cols-2 gap-4" id="user-role-form">
+                        <div class="form-group">
+                            <label for="user-search" class="form-label">Search User</label>
+                            <input id="user-search" type="text" class="form-input" placeholder="Username or email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-role" class="form-label">New Role</label>
+                            <select id="user-role" class="form-input">
+                                <option>Member</option>
+                                <option>Suspended</option>
+                            </select>
+                        </div>
+                        <div class="form-group md:col-span-2">
+                            <label for="user-note" class="form-label">Internal Note</label>
+                            <textarea id="user-note" class="form-input" rows="3" placeholder="Reason for role change (visible in audit trail)"></textarea>
+                        </div>
+                        <div class="md:col-span-2 flex flex-wrap gap-2 justify-end">
+                            <button type="submit" class="btn btn-primary btn-sm">Apply Update</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm">Send Notification</button>
+                            <button type="reset" class="btn btn-outline btn-sm">Clear</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <h2 class="card-title">Registered Users</h2>
+                        <p class="card-description">Overview of active accounts along with their related activity inside Watchly.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button id="export-users-btn" type="button" class="btn btn-outline-primary btn-sm">Export Users</button>
+                    </div>
+                </div>
+                <div class="card-content overflow-x-auto">
+                    <table class="table table-compact">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>User Type</th>
+                                <th class="text-nowrap">Related Records</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <tr><td colspan="5" class="text-center text-muted-foreground">Loading users...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="section-friend-requests" class="card">
+                <div class="card-header flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <h2 class="card-title">Friend Requests</h2>
+                        <p class="card-description">Status breakdown for each friend request recorded so far.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button id="export-queue-btn" type="button" class="btn btn-outline-primary btn-sm">Export Queue</button>
+                    </div>
+                </div>
+                <div class="card-content overflow-x-auto">
+                    <table class="table table-compact">
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Sender &rarr; Receiver</th>
+                                <th>Status</th>
+                                <th>Request Date</th>
+                                <th>Response Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="friend-requests-table-body">
+                            <tr><td colspan="5" class="text-center text-muted-foreground">Loading friend requests...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="section-watchlist" class="card">
+                <div class="card-header flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <h2 class="card-title">Watchlist Entries</h2>
+                        <p class="card-description">Watchlist progress for each user and featured movie pairing.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button id="export-watchlist-btn" type="button" class="btn btn-outline-primary btn-sm">Export Watchlist</button>
+                    </div>
+                </div>
+                <div class="card-content overflow-x-auto">
+                    <table class="table table-compact">
+                        <thead>
+                            <tr>
+                                <th>Entry ID</th>
+                                <th>User ID</th>
+                                <th>Movie ID</th>
+                                <th>Status</th>
+                                <th>Last Updated</th>
+                            </tr>
+                        </thead>
+                        <tbody id="watchlist-table-body">
+                            <tr><td colspan="5" class="text-center text-muted-foreground">Loading watchlist entries...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-brand-row">
+                        <img src="Watchly logo.png" alt="Watchly logo" class="footer-logo">
+                        <span class="footer-brand-name">Watchly Admin</span>
+                    </div>
+                    <p class="footer-description">Single-admin catalogue governance for Watchly.</p>
+                    <p class="text-sm text-muted-foreground">Signed in as <strong>admin@watchly.com</strong></p>
+                </div>
+
+                <div class="footer-section">
+                    <h3 class="footer-heading">Console Shortcuts</h3>
+                    <ul class="footer-links">
+                        <li><a href="admin-dashboard.html">Admin Overview</a></li>
+                        <li><a href="admin-manage-movies.html">Manage Movies</a></li>
+                        <li><a href="admin-manage-genres.html">Manage Genres</a></li>
+                        <li><a href="admin-manage-users.html">Manage Users</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3 class="footer-heading">Moderation Tools</h3>
+                    <ul class="footer-links">
+                        <li><a href="admin-manage-posts.html">Posts &amp; Comments</a></li>
+                        <li><a href="admin-restricted-terms.html">Restricted Terms</a></li>
+                        <li><a href="admin-audit-log.html">Audit Trail</a></li>
+                        <li><a href="admin-dashboard.html#reports">Analytics Reports</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3 class="footer-heading">User Experience</h3>
+                    <ul class="footer-links">
+                        <li><a href="dashboard.html">User Dashboard</a></li>
+                        <li><a href="movies.html">Movies Catalog</a></li>
+                        <li><a href="watchlist.html">Watchlist</a></li>
+                        <li><a href="events.html">Events</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="footer-bottom-text">&copy; <span class="footer-year">2025</span> Watchly Admin Console. Operational oversight by admin@watchly.com.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            return new Date(dateString).toLocaleString('en-US', { 
+                year: 'numeric', month: 'short', day: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+        }
+
+        async function loadUsers() {
+            try {
+                const users = await Admin.getUsers();
+                const tbody = document.getElementById('users-table-body');
+                
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted-foreground">No users found</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = users.map(user => {
+                    const badgeClass = user.user_type === 'admin' ? 'badge-secondary' : 'badge';
+                    return `
+                        <tr>
+                            <td>${user.user_id}</td>
+                            <td>${user.name}</td>
+                            <td>${user.email}</td>
+                            <td><span class="badge ${badgeClass}">${user.user_type}</span></td>
+                            <td class="text-wrap">User activity details</td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        async function loadFriendRequests() {
+            try {
+                const response = await fetch('/api/friends/requests', {
+                    credentials: 'include'
+                });
+                const friendRequests = await response.json();
+                const tbody = document.getElementById('friend-requests-table-body');
+                
+                if (friendRequests.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted-foreground">No friend requests found</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = friendRequests.map(req => {
+                    let statusBadge = 'badge';
+                    if (req.status === 'accepted') statusBadge = 'badge-success';
+                    else if (req.status === 'pending') statusBadge = 'badge-warning';
+                    else if (req.status === 'declined') statusBadge = 'badge-destructive';
+                    
+                    return `
+                        <tr>
+                            <td>${req.request_id}</td>
+                            <td>${req.sender_id} &rarr; ${req.receiver_id}</td>
+                            <td><span class="badge ${statusBadge}">${req.status}</span></td>
+                            <td class="text-muted-foreground">${formatDate(req.request_date)}</td>
+                            <td class="text-muted-foreground">${formatDate(req.response_date)}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading friend requests:', error);
+            }
+        }
+
+        async function loadWatchlist() {
+            try {
+                const response = await fetch('/api/watchlist/all', {
+                    credentials: 'include'
+                });
+                const watchlist = await response.json();
+                const tbody = document.getElementById('watchlist-table-body');
+                
+                if (watchlist.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted-foreground">No watchlist entries found</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = watchlist.map(entry => {
+                    let statusBadge = 'badge';
+                    if (entry.status === 'completed') statusBadge = 'badge-success';
+                    else if (entry.status === 'watching') statusBadge = 'badge-warning';
+                    
+                    return `
+                        <tr>
+                            <td>${entry.watchlist_id}</td>
+                            <td>${entry.user_id}</td>
+                            <td>${entry.movie_id}</td>
+                            <td><span class="badge ${statusBadge}">${entry.status}</span></td>
+                            <td class="text-muted-foreground">${formatDate(entry.added_date)}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading watchlist:', error);
+            }
+        }
+
+        async function handleLogout(e) {
+            e.preventDefault();
+            try { await Auth.logout(); } catch (e) {}
+            window.location.href = 'admin-login.html';
+        }
+
+        async function init() {
+            try {
+                const session = await Auth.checkSession();
+                if (!session.authenticated || session.user.type !== 'admin') {
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
+                await Promise.all([loadUsers(), loadFriendRequests(), loadWatchlist()]);
+            } catch (error) {
+                window.location.href = 'admin-login.html';
+            }
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', handleLogout);
+        document.getElementById('user-role-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Role update functionality would be implemented here');
+        });
+        
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

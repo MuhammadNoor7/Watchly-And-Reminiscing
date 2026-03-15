@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Trail - Watchly Admin</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="min-h-screen bg-background">
+        <nav class="navbar">
+            <div class="navbar-content">
+                <a href="admin-dashboard.html" class="navbar-brand">
+                    <img src="Watchly logo.png" alt="Watchly logo" class="navbar-logo" style="width: 24px; height: 24px; object-fit: contain;">
+                    <span class="gradient-text">Watchly Admin</span>
+                </a>
+                <div class="navbar-nav">
+                    <a href="admin-dashboard.html" class="nav-link">
+                        <span class="hidden lg:inline">Dashboard</span>
+                    </a>
+                    <a href="admin-manage-movies.html" class="nav-link">
+                        <span class="hidden lg:inline">Manage Movies</span>
+                    </a>
+                    <a href="admin-manage-genres.html" class="nav-link">
+                        <span class="hidden lg:inline">Manage Genres</span>
+                    </a>
+                    <a href="admin-manage-users.html" class="nav-link">
+                        <span class="hidden lg:inline">Manage Users</span>
+                    </a>
+                    <a href="admin-manage-posts.html" class="nav-link">
+                        <span class="hidden lg:inline">Moderate Posts</span>
+                    </a>
+                    <a href="admin-audit-log.html" class="nav-link active">
+                        <span class="hidden lg:inline">Audit Trail</span>
+                    </a>
+                </div>
+                <div class="navbar-actions">
+                    <a href="admin-dashboard.html" class="nav-link nav-link-compact">Admin Home</a>
+                    <a href="#" id="logout-btn" class="btn btn-primary btn-sm">Logout</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container mx-auto px-4 py-8 space-y-8">
+            <header class="space-y-2">
+                <p class="text-sm text-muted-foreground">Transparency Log</p>
+                <h1 class="text-3xl font-bold">Administrative Audit Trail</h1>
+                <p class="text-muted-foreground max-w-3xl">All administrative actions by <strong>admin@watchly.com</strong> are captured for accountability. Filter by date or action type to review change history.</p>
+            </header>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Filter Logs</h2>
+                    <p class="card-description">Apply filters to narrow down the audit trail.</p>
+                </div>
+                <div class="card-content">
+                    <form class="grid grid-cols-1 md:grid-cols-4 gap-4" id="filter-form">
+                        <div class="form-group">
+                            <label for="filter-admin" class="form-label">Admin Account</label>
+                            <input id="filter-admin" type="text" class="form-input" placeholder="admin@watchly.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-action" class="form-label">Action</label>
+                            <select id="filter-action" class="form-input">
+                                <option value="">All</option>
+                                <option>CREATE</option>
+                                <option>UPDATE</option>
+                                <option>DELETE</option>
+                                <option>MODERATE</option>
+                                <option>EXPORT</option>
+                                <option>LOGIN</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-from" class="form-label">From</label>
+                            <input id="filter-from" type="date" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-to" class="form-label">To</label>
+                            <input id="filter-to" type="date" class="form-input">
+                        </div>
+                        <div class="md:col-span-4 flex flex-wrap gap-2">
+                            <button type="submit" class="btn btn-primary">Apply Filters</button>
+                            <button type="reset" class="btn btn-outline">Clear</button>
+                            <button id="export-logs-btn" type="button" class="btn btn-outline-primary">Export Logs</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <section id="section-audit-log" class="card">
+                <div class="card-header flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <h2 class="card-title">Latest Administrative Actions</h2>
+                        <p class="card-description">Chronological log of moderation, catalog, and system changes.</p>
+                    </div>
+                </div>
+                <div class="card-content overflow-x-auto">
+                    <table class="table table-compact">
+                        <thead>
+                            <tr>
+                                <th>Log ID</th>
+                                <th>Admin ID</th>
+                                <th>Operation</th>
+                                <th>Target Table</th>
+                                <th>Target ID</th>
+                                <th>Details</th>
+                                <th>Data Check</th>
+                            </tr>
+                        </thead>
+                        <tbody id="audit-logs-table-body">
+                            <tr><td colspan="7" class="text-center text-muted-foreground">Loading audit logs...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-brand-row">
+                        <img src="Watchly logo.png" alt="Watchly logo" class="footer-logo">
+                        <span class="footer-brand-name">Watchly Admin</span>
+                    </div>
+                    <p class="footer-description">Single-admin catalogue governance for Watchly.</p>
+                    <p class="text-sm text-muted-foreground">Signed in as <strong>admin@watchly.com</strong></p>
+                </div>
+
+                <div class="footer-section">
+                    <h3 class="footer-heading">Console Shortcuts</h3>
+                    <ul class="footer-links">
+                        <li><a href="admin-dashboard.html">Admin Overview</a></li>
+                        <li><a href="admin-manage-movies.html">Manage Movies</a></li>
+                        <li><a href="admin-manage-genres.html">Manage Genres</a></li>
+                        <li><a href="admin-manage-users.html">Manage Users</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3 class="footer-heading">Moderation Tools</h3>
+                    <ul class="footer-links">
+                        <li><a href="admin-manage-posts.html">Posts &amp; Comments</a></li>
+                        <li><a href="admin-restricted-terms.html">Restricted Terms</a></li>
+                        <li><a href="admin-audit-log.html">Audit Trail</a></li>
+                        <li><a href="admin-dashboard.html#reports">Analytics Reports</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3 class="footer-heading">User Experience</h3>
+                    <ul class="footer-links">
+                        <li><a href="dashboard.html">User Dashboard</a></li>
+                        <li><a href="movies.html">Movies Catalog</a></li>
+                        <li><a href="watchlist.html">Watchlist</a></li>
+                        <li><a href="events.html">Events</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="footer-bottom-text">&copy; <span class="footer-year">2025</span> Watchly Admin Console. Operational oversight by admin@watchly.com.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            return new Date(dateString).toLocaleString('en-US', { 
+                year: 'numeric', month: 'short', day: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+        }
+
+        async function loadAuditLogs() {
+            try {
+                const logs = await Admin.getAuditLogs();
+                const tbody = document.getElementById('audit-logs-table-body');
+                
+                if (logs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted-foreground">No audit logs found</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = logs.map(log => `
+                    <tr>
+                        <td>${log.log_id}</td>
+                        <td>${log.admin_id}</td>
+                        <td>${log.operation}</td>
+                        <td>${log.target_table}</td>
+                        <td>${log.target_id || 'N/A'}</td>
+                        <td class="text-wrap">${log.details || 'N/A'}</td>
+                        <td><span class="badge badge-warning">Missing Admin</span></td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading audit logs:', error);
+            }
+        }
+
+        async function handleLogout(e) {
+            e.preventDefault();
+            try { await Auth.logout(); } catch (e) {}
+            window.location.href = 'admin-login.html';
+        }
+
+        async function init() {
+            try {
+                const session = await Auth.checkSession();
+                if (!session.authenticated || session.user.type !== 'admin') {
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
+                await loadAuditLogs();
+            } catch (error) {
+                window.location.href = 'admin-login.html';
+            }
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', handleLogout);
+        document.getElementById('filter-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Filter functionality would be implemented here');
+        });
+        
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
