@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Genres - Watchly Admin</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="min-h-screen bg-background">
+        <nav class="navbar">
+            <div class="navbar-content">
+                <a href="admin-dashboard.html" class="navbar-brand">
+                    <img src="Watchly logo.png" alt="Watchly logo" class="navbar-logo" style="width: 24px; height: 24px; object-fit: contain;">
+                    <span class="gradient-text">Watchly Admin</span>
+                </a>
+                <div class="navbar-nav">
+                    <a href="admin-dashboard.html" class="nav-link">
+                        <span class="hidden lg:inline">Dashboard</span>
+                    </a>
+                    <a href="admin-manage-movies.html" class="nav-link">
+                        <span class="hidden lg:inline">Manage Movies</span>
+                    </a>
+                    <a href="admin-manage-genres.html" class="nav-link active">
+                        <span class="hidden lg:inline">Manage Genres</span>
+                    </a>
+                    <a href="admin-manage-users.html" class="nav-link">
+                        <span class="hidden lg:inline">Manage Users</span>
+                    </a>
+                    <a href="admin-manage-posts.html" class="nav-link">
+                        <span class="hidden lg:inline">Moderate Posts</span>
+                    </a>
+                    <a href="admin-audit-log.html" class="nav-link">
+                        <span class="hidden lg:inline">Audit Trail</span>
+                    </a>
+                </div>
+                <div class="navbar-actions">
+                    <a href="admin-dashboard.html" class="nav-link nav-link-compact">Admin Home</a>
+                    <a href="#" class="btn btn-primary btn-sm" id="logout-btn">Logout</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container mx-auto px-4 py-8">
+            <div class="flex justify-between items-start mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">Manage Genres</h1>
+                    <p class="text-muted-foreground">Add, edit, and delete movie genres</p>
+                </div>
+                <button class="btn btn-primary" id="add-genre-btn">Add New Genre</button>
+            </div>
+
+            <div id="genre-modal" class="modal" style="display: none;">
+                <div class="modal-overlay" onclick="closeModal()"></div>
+                <div class="modal-content card">
+                    <div class="card-content">
+                        <h2 class="text-2xl font-bold mb-4" id="modal-title">Add Genre</h2>
+                        <form id="genre-form">
+                            <input type="hidden" id="genre-id">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium mb-2">Name *</label>
+                                <input type="text" id="genre-name" class="form-input" required>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium mb-2">Description</label>
+                                <textarea id="genre-description" class="form-input" rows="3"></textarea>
+                            </div>
+                            <div class="flex gap-4">
+                                <button type="submit" class="btn btn-primary">Save Genre</button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="closeModal()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <div class="overflow-x-auto">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="genres-table-body">
+                                <tr><td colspan="4" class="text-center text-muted-foreground">Loading genres...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <style>
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); }
+        .modal-content { position: relative; z-index: 1001; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; }
+    </style>
+
+    <script src="api.js"></script>
+    <script>
+        let allGenres = [];
+        let editingGenreId = null;
+
+        async function loadGenres() {
+            try {
+                allGenres = await Admin.getGenres();
+                const tbody = document.getElementById('genres-table-body');
+                
+                if (allGenres.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted-foreground">No genres found</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = allGenres.map(genre => `
+                    <tr>
+                        <td>${genre.genre_id}</td>
+                        <td>${genre.name}</td>
+                        <td>${genre.description || 'N/A'}</td>
+                        <td>
+                            <button class="btn btn-outline-primary btn-sm" onclick="editGenre(${genre.genre_id})">Edit</button>
+                            <button class="btn btn-outline-destructive btn-sm" onclick="deleteGenre(${genre.genre_id}, '${genre.name.replace(/'/g, "\\'")}')">Delete</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading genres:', error);
+                alert('Failed to load genres');
+            }
+        }
+
+        function openModal(genreId = null) {
+            editingGenreId = genreId;
+            const modal = document.getElementById('genre-modal');
+            const form = document.getElementById('genre-form');
+            
+            if (genreId) {
+                document.getElementById('modal-title').textContent = 'Edit Genre';
+                const genre = allGenres.find(g => g.genre_id === genreId);
+                if (genre) {
+                    document.getElementById('genre-id').value = genre.genre_id;
+                    document.getElementById('genre-name').value = genre.name;
+                    document.getElementById('genre-description').value = genre.description || '';
+                }
+            } else {
+                document.getElementById('modal-title').textContent = 'Add Genre';
+                form.reset();
+                document.getElementById('genre-id').value = '';
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('genre-modal').style.display = 'none';
+            document.getElementById('genre-form').reset();
+            editingGenreId = null;
+        }
+
+        async function saveGenre(e) {
+            e.preventDefault();
+            
+            const genreId = document.getElementById('genre-id').value;
+            const name = document.getElementById('genre-name').value;
+            const description = document.getElementById('genre-description').value;
+            
+            try {
+                if (genreId) {
+                    await Admin.updateGenre(parseInt(genreId), name, description);
+                    alert('Genre updated successfully!');
+                } else {
+                    await Admin.addGenre(name, description);
+                    alert('Genre added successfully!');
+                }
+                closeModal();
+                loadGenres();
+            } catch (error) {
+                alert(error.message || 'Failed to save genre');
+            }
+        }
+
+        function editGenre(genreId) {
+            openModal(genreId);
+        }
+
+        async function deleteGenre(genreId, name) {
+            if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
+            
+            try {
+                await Admin.deleteGenre(genreId);
+                alert('Genre deleted successfully!');
+                loadGenres();
+            } catch (error) {
+                alert(error.message || 'Failed to delete genre');
+            }
+        }
+
+        async function handleLogout() {
+            try { await Auth.logout(); } catch (e) {}
+            window.location.href = 'admin-login.html';
+        }
+
+        async function init() {
+            try {
+                const session = await Auth.checkSession();
+                if (!session.authenticated || session.user.type !== 'admin') {
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
+                await loadGenres();
+            } catch (error) {
+                window.location.href = 'admin-login.html';
+            }
+        }
+
+        document.getElementById('add-genre-btn').addEventListener('click', () => openModal());
+        document.getElementById('genre-form').addEventListener('submit', saveGenre);
+        document.getElementById('logout-btn').addEventListener('click', (e) => { e.preventDefault(); handleLogout(); });
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
